@@ -246,3 +246,10 @@ public class DictionaryProgram {
         return null;
     }
 }
+
+
+
+// En la traudccion de oraciones, no logre reemplazar la palabrfa ingles con la palabra trauducida al idioma 
+// solicitado :(
+    
+
