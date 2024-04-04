@@ -101,8 +101,7 @@ public class DictionaryProgram {
 
     public static void main(String[] args) {
         loadDictionary("diccionario.txt");
-        displayDictionary();
-        translateText("texto.txt");
+        displayMenu();
     }
 
     // Método para cargar el diccionario desde un archivo
@@ -120,14 +119,7 @@ public class DictionaryProgram {
                     String spanishWord = parts[1].trim().toLowerCase();
                     String frenchWord = parts[2].trim().toLowerCase();
 
-                    englishTree.insert(englishWord);
-                    spanishTree.insert(spanishWord);
-                    frenchTree.insert(frenchWord);
-
-                    // Construir mapa de palabras
-                    languageMap.put(englishWord, "inglés");
-                    languageMap.put(spanishWord, "español");
-                    languageMap.put(frenchWord, "francés");
+                    insertAssociation(englishWord, spanishWord, frenchWord);
                 } else {
                     System.out.println("Error en el formato de línea: " + line);
                 }
@@ -139,19 +131,59 @@ public class DictionaryProgram {
         }
     }
 
-    // Método para mostrar las palabras en orden para cada idioma
-    private static void displayDictionary() {
-        System.out.println("Palabras en inglés:");
-        englishTree.inOrderTraversal();
-        System.out.println();
+    // Método para insertar una asociación en los árboles de búsqueda
+    private static void insertAssociation(String english, String spanish, String french) {
+        englishTree.insert(english);
+        spanishTree.insert(spanish);
+        frenchTree.insert(french);
 
-        System.out.println("\nPalabras en español:");
-        spanishTree.inOrderTraversal();
-        System.out.println();
+        // Construir mapa de palabras
+        languageMap.put(english, "inglés");
+        languageMap.put(spanish, "español");
+        languageMap.put(french, "francés");
+    }
 
-        System.out.println("\nPalabras en francés:");
-        frenchTree.inOrderTraversal();
-        System.out.println();
+    // Método para mostrar el menú de opciones
+    private static void displayMenu() {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\nSeleccione una opción:");
+            System.out.println("1. Mostrar palabras ordenadas en inglés");
+            System.out.println("2. Mostrar palabras ordenadas en español");
+            System.out.println("3. Mostrar palabras ordenadas en francés");
+            System.out.println("4. Traducir texto a español, inglés y francés");
+            System.out.println("5. Salir");
+
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea después del número
+
+            switch (choice) {
+                case 1:
+                    System.out.println("\nPalabras en inglés:");
+                    englishTree.inOrderTraversal();
+                    break;
+                case 2:
+                    System.out.println("\nPalabras en español:");
+                    spanishTree.inOrderTraversal();
+                    break;
+                case 3:
+                    System.out.println("\nPalabras en francés:");
+                    frenchTree.inOrderTraversal();
+                    break;
+                case 4:
+                    translateText("texto.txt");
+                    break;
+                case 5:
+                    System.out.println("¡Adiós!");
+                    break;
+                default:
+                    System.out.println("Opción no válida");
+            }
+        } while (choice != 5);
+
+        scanner.close();
     }
 
     // Método para traducir un texto a los tres idiomas del diccionario
@@ -190,8 +222,10 @@ public class DictionaryProgram {
             String translatedWord = translateWord(originalWord, targetLanguage);
 
             if (translatedWord != null) {
+                // Reemplazamos la palabra original en la oración con su traducción
                 translatedSentence.append(translatedWord).append(" ");
             } else {
+                // Si la palabra no se encuentra en el diccionario, agregamos la palabra original entre asteriscos
                 translatedSentence.append("*").append(word).append("* ").append(" ");
             }
         }
@@ -204,9 +238,9 @@ public class DictionaryProgram {
         if (targetLanguage.equals("inglés")) {
             return word;
         } else if (targetLanguage.equals("español")) {
-            return languageMap.getOrDefault(word, "*");
+            return languageMap.getOrDefault(word, null);
         } else if (targetLanguage.equals("francés")) {
-            return languageMap.getOrDefault(word, "*");
+            return languageMap.getOrDefault(word, null);
         }
 
         return null;
